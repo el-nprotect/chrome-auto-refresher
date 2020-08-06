@@ -36,7 +36,7 @@ function createTimer(tabId) {
   if (resetTimer(tabId)) {
     return;
   }
-  const initialTimeout = getRandomInt(3, 10) * 60;
+  const initialTimeout = getRandomInt(3, 12)*60;
   let tabTimer = {
     tabId: tabId,
     intervalId: 0,
@@ -66,7 +66,7 @@ function removeTimer(tabId) {
 function resetTimer(tabId) {
   for (let i = 0; i < tabTimers.length; i++) {
     if (tabTimers[i].tabId === tabId) {
-      tabTimers[i].currentTimeout = tabTimers[i].initialTimeout;
+      tabTimers[i].currentTimeout = getRandomInt(3, 12)*60;
       updateBadge(tabTimers[i].tabId, tabTimers[i].currentTimeout);
       return true;
     }
@@ -77,7 +77,8 @@ function resetTimer(tabId) {
 function onTimerEvent(tabTimer) {
   if (tabTimer.currentTimeout === 0) {
     chrome.tabs.executeScript(tabTimer.tabId, {code: 'window.location.reload();'});
-  } else {
+    tabTimer.currentTimeout = -1;
+  } else if (tabTimer.currentTimeout > 0) {
     tabTimer.currentTimeout--;
     updateBadge(tabTimer.tabId, tabTimer.currentTimeout);
   }
